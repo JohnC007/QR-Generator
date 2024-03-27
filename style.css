@@ -1,0 +1,27 @@
+/* style.css */
+body {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+#qrcode_output {
+    position: relative; /* Needed for positioning the logo */
+    display: inline-block; /* To contain the canvas and the logo */
+    margin-top: 15px;
+}
+#qrcode_logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px; /* Logo size */
+    height: 48px; /* Logo size */
+}
+#save_button {
+    display: none; /* Hide the button initially */
+    margin-top: 15px;
+}
