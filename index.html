@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div id="icon">
+        <img id="icon" src="logo.png">
+    </div>
     <title>Calcannabis QR Code Generator</title>
+
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
@@ -11,74 +15,48 @@
 <body>
     <h2>Department of Cannabis QR Code Generator</h2>
     <input type="text" id="user_input" placeholder="Enter website URL here">
-    <label>
-        <input type="checkbox" id="logo_toggle" checked>
-        Include Logo
-    </label>
+   
     <button id="generate_qr">Generate QR Code</button>
     <div id="qrcode_output">
-        <img id="qrcode_logo" src="download.png" style="display: none;"> <!-- Logo initially hidden -->
+        <!-- QR Code will be generated here -->
     </div>
-    <button id="save_button">Save QR Code</button>
-
+    <button id="save_button" style="display: none;">Save QR Code</button>
     <script>
         $(document).ready(function() {
-            function drawLogoOnQR(callback) {
-                if($('#logo_toggle').is(':checked')) {
-                    var canvas = $('#qrcode_output canvas')[0];
-                    var context = canvas.getContext('2d');
-                    var img = new Image();
-                    img.src = 'download.png'; // Ensure the logo image path is correct
-                    img.onload = function() {
-                        var imageSize = 48; // Size of the logo
-                        var dx = (canvas.width - imageSize) / 2;
-                        var dy = (canvas.height - imageSize) / 2;
-                        context.drawImage(img, dx, dy, imageSize, imageSize);
-                        if(callback) {
-                            callback();
-                        }
-                    };
-                } else {
-                    if(callback) {
-                        callback();
-                    }
-                }
-            }
+            $('#generate_qr').click(function() {
+                var url = $('#user_input').val();
+                var qrContainer = $('#qrcode_output');
     
-            $('#generate_qr').on('click', function() {
-                $('#qrcode_output').empty();
-                var qrText = $('#user_input').val();
-                if(qrText !== '') {
-                    var qrcode = new QRCode(document.getElementById("qrcode_output"), {
-                        text: qrText,
+                // Clear the previous QR code
+                qrContainer.empty();
+    
+                if (url) {
+                    // Generate QR Code
+                    new QRCode(qrContainer[0], {
+                        text: url,
                         width: 256,
                         height: 256,
                         colorDark : "#006400",
                         colorLight : "#ffffff",
                         correctLevel : QRCode.CorrectLevel.H
                     });
-                    // Show the save button
-                    $('#save_button').show();
     
-                    // Draw the logo onto the QR code if the toggle is checked
-                    drawLogoOnQR();
-                } else {
-                    alert('Please enter a URL.');
+                    // Show save button
+                    $('#save_button').show();
                 }
             });
     
-            // Save button functionality
-            $('#save_button').on('click', function() {
-                drawLogoOnQR(function() {
-                    var canvas = $('#qrcode_output canvas')[0];
-                    var qrImg = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+            $('#save_button').click(function() {
+                var canvas = $('#qrcode_output canvas')[0];
+                if (canvas) {
+                    var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
                     var link = document.createElement('a');
                     link.download = 'qrcode.png';
-                    link.href = qrImg;
+                    link.href = image;
                     link.click();
-                });
+                }
             });
         });
-        </script>
-    </body>
-    </html>
+    </script>
+</body>
+</html>
