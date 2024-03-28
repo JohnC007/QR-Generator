@@ -1,27 +1,58 @@
-/* style.css */
-body {
+body, html {
+   
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
     text-align: center;
+}
+#container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+    position: relative;
+    align-items: center; 
+    background-color: white;
 }
-#qrcode_output {
-    position: relative; /* Needed for positioning the logo */
-    display: inline-block; /* To contain the canvas and the logo */
-    margin-top: 15px;
+
+#qrcode {
+    position: relative;
+    display: flex; 
+    justify-content: center; 
 }
-#qrcode_logo {
+
+#qrlogo {
+    display: none; 
     position: absolute;
+    width: 48px;
+    height: 48px;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 48px; /* Logo size */
-    height: 48px; /* Logo size */
+    transform: translate(-50%, -50%); 
 }
-#save_button {
-    display: none; /* Hide the button initially */
-    margin-top: 15px;
+.checkbox-container {
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+}
+
+#include_logo, .checkbox-label {
+    display: inline-block; 
+    vertical-align: middle; 
+}
+input, button {
+    margin-top: 15px; 
+    padding: 10px;
+    align-items: center; 
+    border-radius: 5px; 
+    border: 1px solid #ccc; 
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 10px;
+    background-color: #006400; 
+    color: white; 
+    transition: background-color 0.2s; 
+}
+
+button:hover {
+    background-color: #006400; 
 }
