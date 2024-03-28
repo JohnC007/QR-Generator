@@ -2,61 +2,111 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Calcannabis QR Code Generator</title>
     <div id="icon">
         <img id="icon" src="logo.png">
     </div>
     <title>Calcannabis QR Code Generator</title>
 
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style.css">    
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 </head>
 <body>
-    <h2>Department of Cannabis QR Code Generator</h2>
+    <h2>CalCannabis QR Code Generator</h2>
     <input type="text" id="user_input" placeholder="Enter website URL here">
-   
+    <br>
+    <input type="checkbox" id="include_logo" checked>
+    <label for="include_logo">Include Logo</label>
+    <br>
     <button id="generate_qr">Generate QR Code</button>
-    <div id="qrcode_output">
-        <!-- QR Code will be generated here -->
+    <div id="qrcode">
     </div>
+
     <button id="save_button" style="display: none;">Save QR Code</button>
+
     <script>
         $(document).ready(function() {
-            $('#generate_qr').click(function() {
-                var url = $('#user_input').val();
-                var qrContainer = $('#qrcode_output');
-    
-                // Clear the previous QR code
-                qrContainer.empty();
-    
-                if (url) {
-                    // Generate QR Code
-                    new QRCode(qrContainer[0], {
-                        text: url,
+            $('#generate_qr').on('click', function() {
+                var qrText = $('#user_input').val();
+                var includeLogo = $('#include_logo').is(':checked');
+                $('#qrcode').empty(); 
+        
+                if (qrText !== '') {
+                    // Generate QR code
+                    var qrcode = new QRCode(document.getElementById("qrcode"), {
+                        text: qrText,
                         width: 256,
                         height: 256,
-                        colorDark : "#006400",
-                        colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.H
+                        colorDark: "#006400",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
                     });
-    
-                    // Show save button
+        
                     $('#save_button').show();
+        
+                    if (includeLogo) {
+                        setTimeout(function() {
+                            appendLogo();
+                        }, 100);
+                    }
+                } else {
+                    alert('Please enter a URL.');
                 }
             });
-    
+        
             $('#save_button').click(function() {
-                var canvas = $('#qrcode_output canvas')[0];
-                if (canvas) {
-                    var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-                    var link = document.createElement('a');
-                    link.download = 'qrcode.png';
-                    link.href = image;
-                    link.click();
-                }
+                saveQRCodeWithLogo();
             });
+        
+            function appendLogo() {
+                $('#qrcode').append('<img id="qrlogo" src="download.png" style="display: block; position: absolute; width: 48px; height: 48px; top: 50%; left: 50%; transform: translate(-50%, -50%);">');
+            }
+        
+            function saveQRCodeWithLogo() {
+    var canvas = $('#qrcode canvas')[0]; 
+    var includeLogo = $('#include_logo').is(':checked'); 
+
+    if (canvas) {
+        var combinedCanvas = document.createElement('canvas');
+        combinedCanvas.width = canvas.width;
+        combinedCanvas.height = canvas.height;
+        var ctx = combinedCanvas.getContext('2d');
+
+        ctx.drawImage(canvas, 0, 0);
+
+        if (includeLogo) {
+            var logo = $('#qrlogo')[0]; 
+            if (logo) {
+                var logoPosX = (canvas.width - 48) / 2; 
+                var logoPosY = (canvas.height - 48) / 2;
+                var img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, logoPosX, logoPosY, 48, 48); 
+                    triggerDownload(combinedCanvas); 
+                };
+                img.src = logo.src;
+            } else {
+                triggerDownload(combinedCanvas);
+            }
+        } else {
+            triggerDownload(combinedCanvas);
+        }
+    }
+}
+
+    function triggerDownload(combinedCanvas) {
+        var image = combinedCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+        var link = document.createElement('a');
+        link.download = 'qrcode.png';
+        link.href = image;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
         });
-    </script>
+        </script>
+
 </body>
 </html>
