@@ -2,39 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
     <title>Calcannabis QR Code Generator</title>
-    <div id="icon">
-        <img id="icon" src="logo.png">
-    </div>
-    <title>Calcannabis QR Code Generator</title>
-
     <link rel="stylesheet" type="text/css" href="style.css">    
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script> <!-- reCAPTCHA script -->
 </head>
 <body>
     <h2>CalCannabis QR Code Generator</h2>
-    <input type="text" id="user_input" placeholder="Enter website URL here">
+    <input type="text" id="user_input" placeholder="https://johnc007.github.io/">
     <br>
     <input type="checkbox" id="include_logo" checked>
     <label for="include_logo">Include Logo</label>
     <br>
+    <div class="g-recaptcha" data-sitekey="6LcDMSwqAAAAAB68DNN_CAZD0bJlx4cahrAFaP5_"></div> <!-- reCAPTCHA widget -->
+    <br>
     <button id="generate_qr">Generate QR Code</button>
-    <div id="qrcode">
-    </div>
-
+    <div id="qrcode"></div>
     <button id="save_button" style="display: none;">Save QR Code</button>
 
     <script>
         $(document).ready(function() {
             $('#generate_qr').on('click', function() {
+                var response = grecaptcha.getResponse();
+                if (response.length === 0) {
+                    alert('Please complete the reCAPTCHA');
+                    return;
+                }
+
                 var qrText = $('#user_input').val();
                 var includeLogo = $('#include_logo').is(':checked');
                 $('#qrcode').empty(); 
         
                 if (qrText !== '') {
-                    // Generate QR code
                     var qrcode = new QRCode(document.getElementById("qrcode"), {
                         text: qrText,
                         width: 256,
@@ -65,48 +65,47 @@
             }
         
             function saveQRCodeWithLogo() {
-    var canvas = $('#qrcode canvas')[0]; 
-    var includeLogo = $('#include_logo').is(':checked'); 
+                var canvas = $('#qrcode canvas')[0]; 
+                var includeLogo = $('#include_logo').is(':checked'); 
 
-    if (canvas) {
-        var combinedCanvas = document.createElement('canvas');
-        combinedCanvas.width = canvas.width;
-        combinedCanvas.height = canvas.height;
-        var ctx = combinedCanvas.getContext('2d');
+                if (canvas) {
+                    var combinedCanvas = document.createElement('canvas');
+                    combinedCanvas.width = canvas.width;
+                    combinedCanvas.height = canvas.height;
+                    var ctx = combinedCanvas.getContext('2d');
 
-        ctx.drawImage(canvas, 0, 0);
+                    ctx.drawImage(canvas, 0, 0);
 
-        if (includeLogo) {
-            var logo = $('#qrlogo')[0]; 
-            if (logo) {
-                var logoPosX = (canvas.width - 48) / 2; 
-                var logoPosY = (canvas.height - 48) / 2;
-                var img = new Image();
-                img.onload = function() {
-                    ctx.drawImage(img, logoPosX, logoPosY, 48, 48); 
-                    triggerDownload(combinedCanvas); 
-                };
-                img.src = logo.src;
-            } else {
-                triggerDownload(combinedCanvas);
+                    if (includeLogo) {
+                        var logo = $('#qrlogo')[0]; 
+                        if (logo) {
+                            var logoPosX = (canvas.width - 48) / 2; 
+                            var logoPosY = (canvas.height - 48) / 2;
+                            var img = new Image();
+                            img.onload = function() {
+                                ctx.drawImage(img, logoPosX, logoPosY, 48, 48); 
+                                triggerDownload(combinedCanvas); 
+                            };
+                            img.src = logo.src;
+                        } else {
+                            triggerDownload(combinedCanvas);
+                        }
+                    } else {
+                        triggerDownload(combinedCanvas);
+                    }
+                }
             }
-        } else {
-            triggerDownload(combinedCanvas);
-        }
-    }
-}
 
-    function triggerDownload(combinedCanvas) {
-        var image = combinedCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-        var link = document.createElement('a');
-        link.download = 'qrcode.png';
-        link.href = image;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+            function triggerDownload(combinedCanvas) {
+                var image = combinedCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                var link = document.createElement('a');
+                link.download = 'qrcode.png';
+                link.href = image;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         });
-        </script>
-
+    </script>
 </body>
 </html>
